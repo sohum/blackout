@@ -1,5 +1,6 @@
 package com.bitsplease.blackout_demo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -23,8 +24,14 @@ public class TimelineActivity extends AppCompatActivity {
 
         InitRecyclerView();
 
-        //listOfDisplayObjects = (ArrayList<DisplayObject>) getIntent().getSerializableExtra("DisplayIntent");
-        InitializeData();
+        //Intent intent = getIntent();
+        //String message = intent.getStringExtra("DisplayList");
+
+          listOfDisplayObjects = new ArrayList<>();
+          listOfDisplayObjects = (ArrayList<DisplayObject>) getIntent().getSerializableExtra("DisplayList");
+
+
+    //      InitializeData();
 
         InitializeAdapter();
         //SortDisplayObject(listOfDisplayObjects);
