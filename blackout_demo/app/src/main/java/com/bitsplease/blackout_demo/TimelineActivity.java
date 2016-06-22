@@ -1,11 +1,16 @@
 package com.bitsplease.blackout_demo;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,18 +29,17 @@ public class TimelineActivity extends AppCompatActivity {
 
         InitRecyclerView();
 
-        //Intent intent = getIntent();
-        //String message = intent.getStringExtra("DisplayList");
+        listOfDisplayObjects = new ArrayList<>();
+        listOfDisplayObjects = (ArrayList<DisplayObject>) getIntent().getSerializableExtra("DisplayList");
 
-          listOfDisplayObjects = new ArrayList<>();
-          listOfDisplayObjects = (ArrayList<DisplayObject>) getIntent().getSerializableExtra("DisplayList");
+        if(!listOfDisplayObjects.isEmpty()) {
 
+            //If the list is empty, you see an
+            View view = (View) findViewById(R.id.text_id);
+            view.setVisibility(View.GONE);
 
-    //      InitializeData();
-
-        InitializeAdapter();
-        //SortDisplayObject(listOfDisplayObjects);
-
+            InitializeAdapter();
+        }
     }
 
     void InitRecyclerView()
@@ -52,22 +56,4 @@ public class TimelineActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
     }
 
-
-
-   /* void SortDisplayObject(ArrayList<DisplayObject> DisplayIntent)
-    {
-        Collections.sort(DisplayIntent, new Comparator<DisplayObject>() {
-            @Override
-            public int compare(DisplayObject lhs, DisplayObject rhs) {
-                return rhs.getTime().get(0).compareTo(lhs.getTime().get(0));
-            }
-        });
-    }*/
-
-    private void InitializeData() {
-        listOfDisplayObjects = new ArrayList<>();
-        listOfDisplayObjects.add(new DisplayObject("SMS","02:30:45", "This is a very long text", R.drawable.sms));
-        listOfDisplayObjects.add(new DisplayObject("Facebook", "03:00:00","This is a very long post", R.drawable.sms));
-        listOfDisplayObjects.add(new DisplayObject("Twitter", "01:40:50","This is a very long tweet", R.drawable.sms));
-    }
 }
