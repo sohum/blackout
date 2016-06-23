@@ -3,6 +3,7 @@ package com.bitsplease.blackout_demo;
 import android.Manifest;
 import android.app.ListActivity;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -15,11 +16,14 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.shawnlin.numberpicker.NumberPicker;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
+
+    public final static int SMS_PERMISSION = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,41 +40,44 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_SMS},
-                    123);
+                    SMS_PERMISSION);
         }
         else
         {
-            NumberPicker numberPicker = (NumberPicker) findViewById(R.id.number_picker);
-            int value = numberPicker.getValue();
-            List<DisplayObject> smsInRange = getSMS();
+            startNewActivity();
         }
+    }
 
+    public void startNewActivity(){
 
+        NumberPicker numberPicker = (NumberPicker) findViewById(R.id.number_picker);
+        int value = numberPicker.getValue();
+        List<DisplayObject> smsInRange = getSMS(value);
+        Intent intent = new Intent(this, TimelineActivity.class);
+        intent.putExtra("DisplayList",(Serializable)smsInRange);
+        startActivity(intent);
     }
 
     /**Method to get all sms in a time range */
-    public List<DisplayObject> getSMS(){
+    public List<DisplayObject> getSMS(int value){
 
         List<DisplayObject> smsList = new ArrayList<DisplayObject>();
         Uri message = Uri.parse("content://sms/inbox");
         ContentResolver cr = getContentResolver();
         long currentTime = System.currentTimeMillis();
-        long range = TimeUnit.HOURS.toMillis(6);
+        long range = TimeUnit.HOURS.toMillis(value);
 
         Cursor c = cr.query(message, null, "date >= ?", new String[] { Long.toString(currentTime - range)}, null);
         int totalSMS = c.getCount();
 
         if (c.moveToFirst()) {
             for (int i = 0; i < totalSMS; i++) {
-                DisplayObject sms = new DisplayObject(c.getString(c.getColumnIndexOrThrow("body")),
-                "SMS",c.getString(c.getColumnIndexOrThrow("date")));
+                DisplayObject sms = new DisplayObject("SMS",
+                c.getString(c.getColumnIndexOrThrow("date")),c.getString(c.getColumnIndexOrThrow("body")), R.drawable.sms);
                 smsList.add(sms);
                 c.moveToNext();
             }
         }
-         else {
-         throw new RuntimeException("You have no SMS in Sent");
-         }
         c.close();
         return smsList;
     }
@@ -79,11 +86,10 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case 123: {
+            case SMS_PERMISSION: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    List<DisplayObject> smsInRange = getSMS();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                   startNewActivity();
                 } else {
 
                     // permission denied, boo! Disable the
@@ -91,9 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 

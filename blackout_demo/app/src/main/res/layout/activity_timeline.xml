@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/info"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:padding="16dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
+    <TextView
+        android:id="@+id/text_id"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:text="Nothing to see here Bud!"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textColorHighlight="@android:color/primary_text_dark"
+        android:layout_centerVertical="true"
+        android:textSize="50dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
