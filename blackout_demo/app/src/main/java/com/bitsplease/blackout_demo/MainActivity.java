@@ -1,9 +1,11 @@
 package com.bitsplease.blackout_demo;
 
 import android.Manifest;
-import android.app.ListActivity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -25,12 +28,21 @@ public class MainActivity extends AppCompatActivity {
 
     public final static int SMS_PERMISSION = 123;
 
-    @Override
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+
+            }
+        }
+    };
+
+@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+
     }
     /** Called when the user clicks the Send button */
     public void sendMessage(View view) {
@@ -53,9 +65,26 @@ public class MainActivity extends AppCompatActivity {
         NumberPicker numberPicker = (NumberPicker) findViewById(R.id.number_picker);
         int value = numberPicker.getValue();
         List<DisplayObject> smsInRange = getSMS(value);
-        Intent intent = new Intent(this, TimelineActivity.class);
-        intent.putExtra("DisplayList",(Serializable)smsInRange);
-        startActivity(intent);
+
+        Intent intent = new Intent(this, FacebookService.class);
+        // add infos for the service which file to download and where to store
+        intent.setAction("com.bitsplease.blackout_demo.action.FACEBOOK");
+        startService(intent);
+        //Intent intent = new Intent(this, TimelineActivity.class);
+        //intent.putExtra("DisplayList",(Serializable)smsInRange);
+        //startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver, new IntentFilter(
+                FacebookService.NOTIFICATION));
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
     }
 
     /**Method to get all sms in a time range */
