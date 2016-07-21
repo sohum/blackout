@@ -1,12 +1,9 @@
 package com.bitsplease.blackout_demo;
 
 import android.Manifest;
+import android.app.ListActivity;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.BroadcastReceiver;
-import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,14 +11,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.shawnlin.numberpicker.NumberPicker;
 
 import java.io.Serializable;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,51 +24,13 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
 
     public final static int SMS_PERMISSION = 123;
-    public int counter = 0;
-    ServiceFacade facade;
-    public int value = 0;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            counter++;
-         //   Bundle bundle = intent.getExtras();
-         //   if (bundle != null) {
-
-                if(counter < 2)
-                {
-                    //startSMS();
-                   // List<DisplayObject> smsInRange = getSMS(value);
-                   // Intent intentTimeLine = new Intent(MainActivity.this, TimelineActivity.class);
-                   // intentTimeLine.putExtra("DisplayList",(Serializable)smsInRange);
-                   // startActivity(intentTimeLine);
-                }
-                else
-                {
-                    //Please come here
-                }
-
-          //  }
-        }
-    };
-
-    private BroadcastReceiver receiverSMS = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-               Bundle bundle = intent.getExtras();
-               if (bundle != null) {
-           //Pray to god this works
-              }
-        }
-    };
-
-
-@Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        facade = new ServiceFacade();
-
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
     }
     /** Called when the user clicks the Send button */
     public void sendMessage(View view) {
@@ -94,25 +51,11 @@ public class MainActivity extends AppCompatActivity {
     public void startNewActivity(){
 
         NumberPicker numberPicker = (NumberPicker) findViewById(R.id.number_picker);
-        value = numberPicker.getValue();
-
-        ServiceFacade facade = new ServiceFacade();
-        facade.startService(this, value);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerReceiver(receiver, new IntentFilter(
-                FacebookService.NOTIFICATION));
-        registerReceiver(receiverSMS,new IntentFilter(
-                FacebookService.NOTIFICATION_SMS));
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(receiver);
-        unregisterReceiver(receiverSMS);
+        int value = numberPicker.getValue();
+        List<DisplayObject> smsInRange = getSMS(value);
+        Intent intent = new Intent(this, TimelineActivity.class);
+        intent.putExtra("DisplayList",(Serializable)smsInRange);
+        startActivity(intent);
     }
 
     /**Method to get all sms in a time range */
