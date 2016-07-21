@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,11 +14,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import com.shawnlin.numberpicker.NumberPicker;
 
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,21 +36,37 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                counter++;
+            counter++;
+         //   Bundle bundle = intent.getExtras();
+         //   if (bundle != null) {
 
-                if(counter == 1)
+                if(counter < 2)
                 {
-                    List<DisplayObject> smsInRange = getSMS(value);
-                    Intent intentTimeLine = new Intent(MainActivity.this, TimelineActivity.class);
-                    intentTimeLine.putExtra("DisplayList",(Serializable)smsInRange);
-                    startActivity(intentTimeLine);
+                    //startSMS();
+                   // List<DisplayObject> smsInRange = getSMS(value);
+                   // Intent intentTimeLine = new Intent(MainActivity.this, TimelineActivity.class);
+                   // intentTimeLine.putExtra("DisplayList",(Serializable)smsInRange);
+                   // startActivity(intentTimeLine);
+                }
+                else
+                {
+                    //Please come here
                 }
 
-            }
+          //  }
         }
     };
+
+    private BroadcastReceiver receiverSMS = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+               Bundle bundle = intent.getExtras();
+               if (bundle != null) {
+           //Pray to god this works
+              }
+        }
+    };
+
 
 @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +97,7 @@ public class MainActivity extends AppCompatActivity {
         value = numberPicker.getValue();
 
         ServiceFacade facade = new ServiceFacade();
-        facade.startFacebookService(this, value);
-    }
-
-    public void startSMS(){
-        facade.startSMSService(this, value);
+        facade.startService(this, value);
     }
 
     @Override
@@ -89,11 +105,14 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         registerReceiver(receiver, new IntentFilter(
                 FacebookService.NOTIFICATION));
+        registerReceiver(receiverSMS,new IntentFilter(
+                FacebookService.NOTIFICATION_SMS));
     }
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
+        unregisterReceiver(receiverSMS);
     }
 
     /**Method to get all sms in a time range */

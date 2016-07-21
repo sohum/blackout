@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -31,6 +32,7 @@ public class FacebookService extends IntentService {
     private static final String ACTION_SMS = "com.bitsplease.blackout_demo.action.SMS";
     private static final String ACTION_FACEBOOK = "com.bitsplease.blackout_demo.action.FACEBOOK";
     public static final String NOTIFICATION = "com.bitsplease.blackout_demo.service.receiver";
+    public static final String NOTIFICATION_SMS = "com.bitsplease.blackout_demo.service.receiver_sms";
 
 
     // TODO: Rename parameters
@@ -75,10 +77,13 @@ public class FacebookService extends IntentService {
     }
 
     private void handleActionFacebook() {
+        Bundle params = new Bundle();
+        params.putString("limit",  "5");
+
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/me",
-                null,
+                "/me/feed",
+                params,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
@@ -118,7 +123,7 @@ public class FacebookService extends IntentService {
     }
 
     private void publishResultsSMS(List<DisplayObject> smsInRange){
-        Intent intent = new Intent(NOTIFICATION);
+        Intent intent = new Intent(NOTIFICATION_SMS);
         intent.putExtra("DisplayList",(Serializable)smsInRange);
         sendBroadcast(intent);
         }
