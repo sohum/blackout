@@ -7,11 +7,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,8 +92,14 @@ public class FacebookService extends IntentService {
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        response.getJSONArray();
-                        publishResultsFacebook();
+                        JSONObject responseObject = response.getJSONObject();
+                        try {
+                            JSONArray responseArray = responseObject.getJSONArray("data");
+                            publishResultsFacebook(responseArray);
+                        }
+                        catch (JSONException e) {
+                            Log.e("BlackOut", "unexpected JSON exception", e);
+                        }
                     }
                 }
         ).executeAsync();
@@ -113,12 +124,29 @@ public class FacebookService extends IntentService {
             }
         }
         c.close();
+        smsList.add(new DisplayObject("SMS", "test_time", "test_message", R.drawable.sms));
         publishResultsSMS(smsList);
     }
 
-    private void publishResultsFacebook() {
+    private void publishResultsFacebook(JSONArray response) {
+
+        List<DisplayObject> objectList = new ArrayList<DisplayObject>();
+
+        for(int i= 0; i<response.length(); i++ )
+        {
+            try {
+                JSONObject rec = response.getJSONObject(i);
+                String message = rec.getString("message");
+                String time = rec.getString("created_time");
+                objectList.add(new DisplayObject("facebook",time,message,R.drawable.sms));
+            }
+            catch (JSONException e) {
+                Log.e("BlackOut", "unexpected JSON exception", e);
+            }
+        }
+
         Intent intent = new Intent(NOTIFICATION);
-        intent.putExtra("DisplayList","Something Something");
+        intent.putExtra("DisplayList",(Serializable)objectList);
         sendBroadcast(intent);
     }
 
