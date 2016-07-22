@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.Context;
+import android.content.res.*;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import twitter4j.*;
+import twitter4j.conf.*;
+
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
@@ -36,8 +40,10 @@ public class FacebookService extends IntentService {
     private static final String ACTION_FOO = "com.bitsplease.blackout_demo.action.FOO";
     private static final String ACTION_SMS = "com.bitsplease.blackout_demo.action.SMS";
     private static final String ACTION_FACEBOOK = "com.bitsplease.blackout_demo.action.FACEBOOK";
+    private static final String ACTION_TWITTER = "com.bitsplease.blackout_demo.action.TWITTER";
     public static final String NOTIFICATION = "com.bitsplease.blackout_demo.service.receiver";
     public static final String NOTIFICATION_SMS = "com.bitsplease.blackout_demo.service.receiver_sms";
+    public static final String NOTIFICATION_TWITTER = "com.bitsplease.blackout_demo.service.receiver_twitter";
 
 
     // TODO: Rename parameters
@@ -78,12 +84,16 @@ public class FacebookService extends IntentService {
             else if (ACTION_FACEBOOK.equals(action)) {
                 handleActionFacebook();
             }
+            else if (ACTION_TWITTER.equals(action)) {
+                handleActionTwitter();
+            }
         }
     }
 
     private void handleActionFacebook() {
         Bundle params = new Bundle();
         params.putString("limit",  "5");
+        params.putString("since", "yesterday");
 
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -126,6 +136,41 @@ public class FacebookService extends IntentService {
         c.close();
         smsList.add(new DisplayObject("SMS", "test_time", "test_message", R.drawable.sms));
         publishResultsSMS(smsList);
+    }
+
+    private void handleActionTwitter(){
+
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setOAuthConsumerKey("dZ5TMmtr1jLMmyDhAbdnY7VnF");
+        cb.setOAuthConsumerSecret("DcfOc1IOGNSM39K4QodHxdhiVKm7D5F34zt8EsVMMdyYKdmYX1");
+        cb.setOAuthAccessToken("756324486224510977-r4JQ6UCA47YDm2O2C4FWVZ53VBwFzas");
+        cb.setOAuthAccessTokenSecret("mzd8q3UfF8BL2XADZjmGegSrd2Ebdfagh0rWNIgsaAFO3");
+
+        Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+        ArrayList<Status> tweets = new ArrayList<Status>();
+
+        try{
+            Paging page = new Paging(1,20);
+            tweets.addAll(twitter.getUserTimeline("Blackout_452", page));
+            publishResultTwitter(tweets);
+            }
+        catch(TwitterException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void publishResultTwitter(ArrayList<Status> tweets){
+
+        List<DisplayObject> objectList = new ArrayList<DisplayObject>();
+
+        for(int i=0; i< tweets.size(); i++){
+            Status status = (Status)tweets.get(i);
+            objectList.add(new DisplayObject("twitter", status.getCreatedAt().toString(), status.getText(),R.drawable.sms));
+        }
+
+        Intent intent = new Intent(NOTIFICATION_TWITTER);
+        intent.putExtra("DisplayList",(Serializable)objectList);
+        sendBroadcast(intent);
     }
 
     private void publishResultsFacebook(JSONArray response) {

@@ -27,5 +27,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.facebook.android:facebook-android-sdk:4.14.0'
     compile 'com.shawnlin:number-picker:1.0.0'
+    compile 'org.twitter4j:twitter4j-core:4.0.2'
 
 }

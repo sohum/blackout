@@ -25,6 +25,10 @@ public class ServiceFacade {
         intentSMS.putExtra(EXTRA_PARAM1, Integer.toString(hours));
         context.startService(intentSMS);
 
+        Intent intentTwitter = new Intent(context, FacebookService.class);
+        intentTwitter.setAction("com.bitsplease.blackout_demo.action.TWITTER");
+        context.startService(intentTwitter);
+
     }
 
 }

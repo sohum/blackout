@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             finalList.addAll((ArrayList<DisplayObject>)intent.getSerializableExtra("DisplayList"));
             if (finalList != null) {
 
-                if(counter == 2)
+                if(counter == 3)
                 {
                     sendToDisplay();
                 }
@@ -47,7 +47,21 @@ public class MainActivity extends AppCompatActivity {
             finalList.addAll((ArrayList<DisplayObject>)intent.getSerializableExtra("DisplayList"));
             if (finalList != null) {
 
-                if (counter == 2) {
+                if (counter == 3) {
+                    sendToDisplay();
+                }
+            }
+        }
+    };
+
+    private BroadcastReceiver receiverTwitter = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            counter++;
+            finalList.addAll((ArrayList<DisplayObject>)intent.getSerializableExtra("DisplayList"));
+            if (finalList != null) {
+
+                if (counter == 3) {
                     sendToDisplay();
                 }
             }
@@ -101,12 +115,15 @@ public class MainActivity extends AppCompatActivity {
                 FacebookService.NOTIFICATION));
         registerReceiver(receiverSMS,new IntentFilter(
                 FacebookService.NOTIFICATION_SMS));
+        registerReceiver(receiverTwitter,new IntentFilter(
+                FacebookService.NOTIFICATION_TWITTER));
     }
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
         unregisterReceiver(receiverSMS);
+        unregisterReceiver(receiverTwitter);
     }
 
     @Override
@@ -115,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
        // unregisterReceiver(receiver);
        // unregisterReceiver(receiverSMS);
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
