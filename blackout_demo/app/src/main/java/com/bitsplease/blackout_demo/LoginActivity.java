@@ -29,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
         callbackManager = CallbackManager.Factory.create();
-        Log.d("Fuck", "Fuck");
 
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -48,10 +47,6 @@ public class LoginActivity extends AppCompatActivity {
 
         if(isLoggedIn())
         {
-            LoginManager.getInstance().logInWithReadPermissions(
-                    this,
-                    Arrays.asList("user_posts"));
-            AccessToken.getCurrentAccessToken().getPermissions();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         }
@@ -79,6 +74,17 @@ public class LoginActivity extends AppCompatActivity {
                         // App code
                     }
                 });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(isLoggedIn())
+        {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
     }
 
     @Override

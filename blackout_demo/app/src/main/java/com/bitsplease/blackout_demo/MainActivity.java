@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, TimelineActivity.class);
         intent.putExtra("DisplayList",(Serializable)finalList);
         startActivity(intent);
+        finish();
     }
 
     public void startNewActivity(){
@@ -111,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
-        unregisterReceiver(receiverSMS);
+       // unregisterReceiver(receiver);
+       // unregisterReceiver(receiverSMS);
     }
 
 
