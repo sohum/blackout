@@ -110,5 +110,11 @@
     <orderEntry type="library" exported="" name="support-v4-23.4.0" level="project" />
     <orderEntry type="library" exported="" name="facebook-android-sdk-4.14.0" level="project" />
     <orderEntry type="library" exported="" name="bolts-android-1.4.0" level="project" />
+<<<<<<< HEAD
+=======
+    <orderEntry type="library" exported="" name="customtabs-23.4.0" level="project" />
+    <orderEntry type="library" exported="" name="twitter4j-core-4.0.2" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-23.4.0" level="project" />
+>>>>>>> shomo
   </component>
 </module>
