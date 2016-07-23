@@ -79,83 +79,103 @@ public class FacebookService extends IntentService {
                 handleActionFoo(param1, param2);
             } else if (ACTION_SMS.equals(action)) {
                 final int hours = Integer.parseInt(intent.getStringExtra(EXTRA_PARAM1));
-                handleActionSMS(hours);
+                final boolean flag = intent.getBooleanExtra(EXTRA_PARAM2, false);
+                handleActionSMS(hours, flag);
             }
             else if (ACTION_FACEBOOK.equals(action)) {
-                handleActionFacebook();
+                final boolean flag = intent.getBooleanExtra(EXTRA_PARAM2, false);
+                handleActionFacebook(flag);
             }
             else if (ACTION_TWITTER.equals(action)) {
-                handleActionTwitter();
+                final boolean flag = intent.getBooleanExtra(EXTRA_PARAM2, false);
+                handleActionTwitter(flag);
             }
         }
     }
 
-    private void handleActionFacebook() {
-        Bundle params = new Bundle();
-        params.putString("limit",  "5");
-        params.putString("since", "yesterday");
+    private void handleActionFacebook(boolean flag) {
 
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me/feed",
-                params,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        JSONObject responseObject = response.getJSONObject();
-                        try {
-                            JSONArray responseArray = responseObject.getJSONArray("data");
-                            publishResultsFacebook(responseArray);
-                        }
-                        catch (JSONException e) {
-                            Log.e("BlackOut", "unexpected JSON exception", e);
+        if(flag) {
+            Bundle params = new Bundle();
+            params.putString("limit", "5");
+            params.putString("since", "yesterday");
+
+            new GraphRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    "/me/feed",
+                    params,
+                    HttpMethod.GET,
+                    new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            JSONObject responseObject = response.getJSONObject();
+                            try {
+                                JSONArray responseArray = responseObject.getJSONArray("data");
+                                publishResultsFacebook(responseArray);
+                            } catch (JSONException e) {
+                                Log.e("BlackOut", "unexpected JSON exception", e);
+                            }
                         }
                     }
-                }
-        ).executeAsync();
-    }
-
-    private void handleActionSMS(int hours) {
-        List<DisplayObject> smsList = new ArrayList<DisplayObject>();
-        Uri message = Uri.parse("content://sms/inbox");
-        ContentResolver cr = getContentResolver();
-        long currentTime = System.currentTimeMillis();
-        long range = TimeUnit.HOURS.toMillis(hours);
-
-        Cursor c = cr.query(message, null, "date >= ?", new String[] { Long.toString(currentTime - range)}, null);
-        int totalSMS = c.getCount();
-
-        if (c.moveToFirst()) {
-            for (int i = 0; i < totalSMS; i++) {
-                DisplayObject sms = new DisplayObject("SMS",
-                        c.getString(c.getColumnIndexOrThrow("date")),c.getString(c.getColumnIndexOrThrow("body")), R.drawable.sms);
-                smsList.add(sms);
-                c.moveToNext();
-            }
+            ).executeAsync();
         }
-        c.close();
-        smsList.add(new DisplayObject("SMS", "test_time", "test_message", R.drawable.sms));
-        publishResultsSMS(smsList);
+        else {
+            JSONArray emptyArray = new JSONArray();
+            publishResultsFacebook(emptyArray);
+        }
     }
 
-    private void handleActionTwitter(){
+    private void handleActionSMS(int hours, boolean flag) {
+        List<DisplayObject> smsList = new ArrayList<DisplayObject>();
 
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setOAuthConsumerKey("dZ5TMmtr1jLMmyDhAbdnY7VnF");
-        cb.setOAuthConsumerSecret("DcfOc1IOGNSM39K4QodHxdhiVKm7D5F34zt8EsVMMdyYKdmYX1");
-        cb.setOAuthAccessToken("756324486224510977-r4JQ6UCA47YDm2O2C4FWVZ53VBwFzas");
-        cb.setOAuthAccessTokenSecret("mzd8q3UfF8BL2XADZjmGegSrd2Ebdfagh0rWNIgsaAFO3");
+        if(flag) {
+            Uri message = Uri.parse("content://sms/inbox");
+            ContentResolver cr = getContentResolver();
+            long currentTime = System.currentTimeMillis();
+            long range = TimeUnit.HOURS.toMillis(hours);
 
-        Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+            Cursor c = cr.query(message, null, "date >= ?", new String[]{Long.toString(currentTime - range)}, null);
+            int totalSMS = c.getCount();
+
+            if (c.moveToFirst()) {
+                for (int i = 0; i < totalSMS; i++) {
+                    DisplayObject sms = new DisplayObject("SMS",
+                            c.getString(c.getColumnIndexOrThrow("date")), c.getString(c.getColumnIndexOrThrow("body")), R.drawable.sms);
+                    smsList.add(sms);
+                    c.moveToNext();
+                }
+            }
+            c.close();
+            publishResultsSMS(smsList);
+        }
+        else {
+            publishResultsSMS(smsList);
+        }
+    }
+
+    private void handleActionTwitter(boolean flag){
+
         ArrayList<Status> tweets = new ArrayList<Status>();
 
-        try{
-            Paging page = new Paging(1,20);
-            tweets.addAll(twitter.getUserTimeline("Blackout_452", page));
-            publishResultTwitter(tweets);
+        if(flag) {
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            cb.setOAuthConsumerKey("dZ5TMmtr1jLMmyDhAbdnY7VnF");
+            cb.setOAuthConsumerSecret("DcfOc1IOGNSM39K4QodHxdhiVKm7D5F34zt8EsVMMdyYKdmYX1");
+            cb.setOAuthAccessToken("756324486224510977-r4JQ6UCA47YDm2O2C4FWVZ53VBwFzas");
+            cb.setOAuthAccessTokenSecret("mzd8q3UfF8BL2XADZjmGegSrd2Ebdfagh0rWNIgsaAFO3");
+
+            Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+
+
+            try {
+                Paging page = new Paging(1, 20);
+                tweets.addAll(twitter.getUserTimeline("Blackout_452", page));
+                publishResultTwitter(tweets);
+            } catch (TwitterException e) {
+                e.printStackTrace();
             }
-        catch(TwitterException e){
-            e.printStackTrace();
+        }
+        else {
+            publishResultTwitter(tweets);
         }
     }
 
@@ -196,10 +216,12 @@ public class FacebookService extends IntentService {
     }
 
     private void publishResultsSMS(List<DisplayObject> smsInRange){
+
         Intent intent = new Intent(NOTIFICATION_SMS);
         intent.putExtra("DisplayList",(Serializable)smsInRange);
         sendBroadcast(intent);
-        }
+
+    }
 
     /**
      * Handle action Foo in the provided background thread with the provided
