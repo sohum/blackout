@@ -185,7 +185,7 @@ public class FacebookService extends IntentService {
 
         for(int i=0; i< tweets.size(); i++){
             Status status = (Status)tweets.get(i);
-            objectList.add(new DisplayObject("twitter", status.getCreatedAt().toString(), status.getText(),R.drawable.sms));
+            objectList.add(new DisplayObject("twitter", status.getCreatedAt().toString(), status.getText(),R.drawable.twitter));
         }
 
         Intent intent = new Intent(NOTIFICATION_TWITTER);
@@ -203,7 +203,7 @@ public class FacebookService extends IntentService {
                 JSONObject rec = response.getJSONObject(i);
                 String message = rec.getString("message");
                 String time = rec.getString("created_time");
-                objectList.add(new DisplayObject("facebook",time,message,R.drawable.sms));
+                objectList.add(new DisplayObject("facebook",time,message,R.drawable.facebook));
             }
             catch (JSONException e) {
                 Log.e("BlackOut", "unexpected JSON exception", e);
