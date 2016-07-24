@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/display_text"
-            android:layout_below="@+id/display_photo"
+            android:layout_below="@+id/display_time"
             />
 
     </RelativeLayout>
