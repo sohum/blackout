@@ -1,0 +1,18 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="com.bitsplease.blackout_demo.SettingsActivity$TwitterPreferenceFragment"
+        android:title="Twitter" android:icon="@drawable/twitter" />
+
+    <header
+        android:fragment="com.bitsplease.blackout_demo.SettingsActivity$SMSPreferenceFragment"
+        android:title="SMS"
+        android:icon="@drawable/sms_speech_bubble" />
+
+    <header
+        android:fragment="com.bitsplease.blackout_demo.SettingsActivity$FacebookPreferenceFragment"
+        android:title="Facebook" android:icon="@drawable/facebook" />
+
+</preference-headers>
