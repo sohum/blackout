@@ -7,31 +7,34 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/main_bg"
+    android:background="@drawable/beerpong"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="sendMessage"
         android:text="@string/button_generate"
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="115dp" />
+        android:background="#ff5722"
+        android:clickable="true"
+        android:textColor="#ffffff" />
 
     <com.shawnlin.numberpicker.NumberPicker
         android:id="@+id/number_picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        app:np_dividerColor="#000000"
+        app:np_dividerColor="#727272"
         app:np_formatter="@string/number_picker_formatter"
         app:np_max="24"
         app:np_min="1"
-        app:np_textColor="#ffffff"
+        app:np_textColor="#ff5722"
         app:np_textSize="@dimen/text_size"
         app:np_typeface="@string/roboto_light"
+        android:layout_marginTop="109dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 

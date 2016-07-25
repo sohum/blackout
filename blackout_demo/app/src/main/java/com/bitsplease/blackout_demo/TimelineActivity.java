@@ -3,6 +3,7 @@ package com.bitsplease.blackout_demo;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,6 +28,10 @@ public class TimelineActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_timeline);
 
+        TextView txt = (TextView) findViewById(R.id.custom_font2);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/ostrichregular.ttf");
+        txt.setTypeface(font);
+
         InitRecyclerView();
 
         listOfDisplayObjects = new ArrayList<>();
@@ -35,7 +40,7 @@ public class TimelineActivity extends AppCompatActivity {
         if(!listOfDisplayObjects.isEmpty()) {
 
             //If the list is empty, you see an
-            View view = (View) findViewById(R.id.text_id);
+            View view = (View) findViewById(R.id.custom_font2);
             view.setVisibility(View.GONE);
 
             InitializeAdapter();

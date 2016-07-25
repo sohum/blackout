@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">blackout_demo</string>
+    <string name="app_name"></string>
     <string name="button_generate">Got Smashed</string>
     <string name="facebook_app_id">1775571629346628</string>
     <string name="number_picker_formatter"></string>

@@ -3,10 +3,12 @@ package com.bitsplease.blackout_demo;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -28,6 +30,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
+
+        TextView txt = (TextView) findViewById(R.id.custom_font);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/ostrichregular.ttf");
+        txt.setTypeface(font);
         callbackManager = CallbackManager.Factory.create();
 
         try {
