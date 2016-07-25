@@ -34,7 +34,8 @@
         app:np_textColor="#ff5722"
         app:np_textSize="@dimen/text_size"
         app:np_typeface="@string/roboto_light"
-        android:layout_centerVertical="true"
+        android:layout_marginTop="109dp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
 
