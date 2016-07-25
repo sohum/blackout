@@ -57,10 +57,10 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
 
-                        LoginManager.getInstance().logInWithReadPermissions(
-                                LoginActivity.this,
-                                Arrays.asList("user_posts"));
-                        AccessToken.getCurrentAccessToken().getPermissions();
+                      //  LoginManager.getInstance().logInWithReadPermissions(
+                      //          LoginActivity.this,
+                      //          Arrays.asList("user_posts"));
+                      //  AccessToken.getCurrentAccessToken().getPermissions();
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                     }

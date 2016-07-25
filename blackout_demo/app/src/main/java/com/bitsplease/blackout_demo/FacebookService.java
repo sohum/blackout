@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -138,8 +139,10 @@ public class FacebookService extends IntentService {
 
             if (c.moveToFirst()) {
                 for (int i = 0; i < totalSMS; i++) {
+                   // int millis = Integer.parseInt(c.getString(c.getColumnIndexOrThrow("date")));
+                   // Date date = new Date(millis);
                     DisplayObject sms = new DisplayObject("SMS",
-                            c.getString(c.getColumnIndexOrThrow("date")), c.getString(c.getColumnIndexOrThrow("body")), R.drawable.sms);
+                            "Few hours ago", c.getString(c.getColumnIndexOrThrow("body")), R.drawable.sms);
                     smsList.add(sms);
                     c.moveToNext();
                 }
